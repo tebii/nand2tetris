@@ -1,0 +1,10 @@
+CHIP Or {
+    IN a, b;
+    OUT out;
+
+    PARTS:
+    Not(in=a, out=not_a);
+    Not(in=b, out=not_b);
+    Nand(a=not_a, b=not_b, out=out);
+
+}

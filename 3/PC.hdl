@@ -1,0 +1,21 @@
+CHIP PC {
+    IN in[16], reset, load, inc;
+    OUT out[16];
+    
+    PARTS:
+    // if any of them are 1, load register
+    Or(a = reset, b = load, out=or1);
+    Or(a = or1, b = inc, out = loadreg);
+
+    // get incremented value
+    Inc16(in=incin, out=incout);
+
+    // if load = 0, increment
+    Mux16(a=incout, b=in, sel=load, out=resin);
+
+    //reset
+    Mux16(a=resin, b=false, sel=reset, out=regin);
+
+    Register(in=regin, load=loadreg, out=incin, out=out);
+
+}

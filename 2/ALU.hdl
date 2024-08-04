@@ -1,0 +1,64 @@
+CHIP ALU {
+    IN  
+        x[16], y[16],  // 16-bit inputs        
+        zx, // zero the x input?
+        nx, // negate the x input?
+        zy, // zero the y input?
+        ny, // negate the y input?
+        f,  // compute (out = x + y) or (out = x & y)?
+        no; // negate the out output?
+    OUT 
+        out[16], // 16-bit output
+        zr,      // if (out == 0) equals 1, else 0
+        ng;      // if (out < 0)  equals 1, else 0
+
+    PARTS:
+
+    // if (zx == 1) sets x = 0
+    Mux16(a = x, b = false, sel=zx, out = zx_out);
+    // if (nx == 1) sets x = !x
+    Not16(in = zx_out, out = not_zx_out);
+    Mux16(a = zx_out, b = not_zx_out, sel=nx, out=nx_out);
+    
+    // if (zy == 1) sets y = 0
+    Mux16(a = y, b = false, sel=zy, out = zy_out);
+    // if (ny == 1) sets xy = !x
+    Not16(in = zy_out, out = not_zy_out);
+    Mux16(a = zy_out, b = not_zy_out, sel=ny, out=ny_out);
+    // if (f == 1) sets out x + y
+    Add16(a = nx_out, b = ny_out, out=addxy);
+    // if (f == 0)  sets out = x & y 
+    And16(a = nx_out, b = ny_out, out=andxy);
+    Mux16(a = andxy, b = addxy, sel = f, out = f_out);
+    Not16(in=f_out, out=not_f_out);
+    Mux16(a=f_out, b=not_f_out, sel = no,
+     out = out,
+     out[0..7] = zrinleft, 
+     out[8..15] = zrinright,
+     out[15] = ngin);
+    
+    // if out == 0, output 1, else 0
+    Or8Way(in=zrinleft, out=zroutleft);
+    Or8Way(in=zrinright, out=zroutright);
+    Or(a=zroutleft, b=zroutright, out=notzr);
+    Not(in=notzr, out=zr);
+
+    // if (out < 0)  equals 1, else 0
+    And(a=ngin, b=true, out= ng);
+
+
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+    //// Replace this comment with your code.
+}
