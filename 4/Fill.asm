@@ -1,0 +1,54 @@
+// Listens for any keyboard input
+(LOOP)
+D=0
+@KBD
+D=M
+@LOOP
+D;JEQ
+// Black screen
+@8192
+D=A
+@i
+M=D
+@j
+M=0
+D=M
+(BLACK)
+@SCREEN
+A=D+A
+M=-1
+@j
+M=M+1
+@i
+M=M-1
+D=M
+@BLACK
+D;JGT
+// checks if key is still pressed
+(LOOPBLACK)
+D=0
+@KBD
+D=M
+@LOOPBLACK
+D;JNE
+// Clear the screen then return to listening
+@8192
+D=A
+@i
+M=D
+@j
+M=0
+D=M
+(WHITE)
+@SCREEN
+A=D+A
+M=0
+@j
+M=M+1
+@i
+M=M-1
+D=M
+@WHITE
+D;JGT
+@LOOP
+D;JMP
