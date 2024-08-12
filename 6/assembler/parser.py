@@ -11,21 +11,26 @@ class Parser:
             stripLine = line.strip()
             # ignore comments and empty lines
             if (stripLine[:2] == "//") or stripLine == "":
-                print("is a comment")
                 continue
             self.asm.append(stripLine)
         self.asmCounter = 0 
         self.fileCounter = 0 
+        self.currentInstruction = self.asm[self.asmCounter]
 
 
     def hasMoreLines(self): 
         # Next line is empty
-        if not self.file.readline():
+        if (self.asmCounter) >= len(self.asm):
             return False
         return True
 
-    def getFile(self):
-        return self.file
+    def advance(self):
+        # increment counter, and then make next instruction the current instruction
+        self.asmCounter+=1
+        self.currentInstruction = self.asm[self.asmCounter]
+
+    def getCurrentInstruction(self):
+        return self.currentInstruction
     
     
 
@@ -37,5 +42,7 @@ class Parser:
 
 if __name__ == '__main__':
     p = Parser()
-    print(p.asm)
+    print(p.getCurrentInstruction())
+    p.advance()
+    print(p.getCurrentInstruction())
 
