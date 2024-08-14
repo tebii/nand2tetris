@@ -1,7 +1,3 @@
-from parser import Parser
-
-
-
 class Code:
     """Processes C-instructions"""
     def dest(self, dest):
@@ -12,20 +8,19 @@ class Code:
                 return "001"
             case "D":
                 return "010"
-            case "DM":
+            case "DM" | "MD":
                 return "011"
             case "A":
                 return "100"
-            case "AM":
+            case "AM" | "MA":
                 return "101"
-            case "AD":
+            case "AD" | "DA":
                 return "110"
             case "ADM":
                 return "111"
 
     def comp(self, comp):
         match comp: 
-            
             case "0":
                 c = "101010"
             case "1":
@@ -39,7 +34,7 @@ class Code:
             case "!D":
                 c = "001101"
             case "!A" | "!M":
-                c = "110011"
+                c = "110001"
             case "-D":
                 c = "001111"
             case "-A" | "-M":
@@ -89,25 +84,4 @@ class Code:
                 return "110"
             case "JMP":
                 return "111"
-
-if __name__ == '__main__':
-    c = Code()
-    print("Testing dest:")
-    print(c.dest("null"))
-    print(c.dest("ADM"))
-    print(c.dest("D"))
-
-    print("Testing comp:")
-    print(c.comp("0"))
-    print(c.comp("A"))
-    print(c.comp("M"))
-    print(c.comp("M-1"))
-
-    print("Testing jump:")
-    print(c.jump("null"))
-    print(c.jump("JGT"))
-    print(c.jump("JMP"))
-
-
-    
 

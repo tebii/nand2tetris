@@ -2,8 +2,8 @@ import sys
 
 class Parser:
     """Parses the assembly file"""
-    def __init__(self):
-        self.file = open(sys.argv[1], "r")
+    def __init__(self, f):
+        self.file = open(f, "r")
         self.asm = []
         for line in self.file:
             # Get rid of whitespace 
@@ -12,7 +12,6 @@ class Parser:
             if (stripLine[:2] != "//") and stripLine != "":
                 self.asm.append(stripLine)
         self.asmCounter = 0 
-        self.fileCounter = 0 
         self.currentInstruction = self.asm[self.asmCounter]
 
     def hasMoreLines(self): 
@@ -39,7 +38,7 @@ class Parser:
 
     def symbol(self):
         # Check if the current instruction has a symbol
-        symbol = "" 
+        symbol = "null" 
         if self.instructionType() == "A_INSTRUCTION":
             if not self.currentInstruction[1::].isnumeric():
                 symbol = self.currentInstruction[1:]
@@ -49,7 +48,7 @@ class Parser:
         return symbol
 
     def dest(self):
-        dest = ""
+        dest = "null"
         if self.instructionType() == "C_INSTRUCTION" and "=" in self.currentInstruction:
             dest =  self.currentInstruction.split("=", 1)[0]
         elif self.instructionType() == "C_instruction" and ";" in self.currentInstruction:
@@ -57,30 +56,18 @@ class Parser:
         return dest
 
     def comp(self):
-        comp = ""
+        comp = "null"
         if self.instructionType() == "C_INSTRUCTION" and "=" in self.currentInstruction:
             comp = self.currentInstruction.split("=", 1)[1]
             if ';' in comp:
                 comp = comp.split(";", 0)[0]
+        elif self.instructionType() == "C_INSTRUCTION" and ";" in self.currentInstruction:
+            comp = self.currentInstruction.split(";", 1)[0]
         return comp
 
     def jump(self):
-        jump = ""
+        jump = "null"
         if self.instructionType() == "C_INSTRUCTION" and ';' in self.currentInstruction :
             jump = self.currentInstruction.split(";", 1)[1]
         return jump
 
-if __name__ == '__main__':
-    p = Parser()
-    while p.hasMoreLines():
-        print(p.currentInstruction)
-        if p.instructionType() == "C_INSTRUCTION":
-            print("dest: " + p.dest())
-            print("comp: " + p.comp())
-            print("jump: " + p.jump())
-        p.advance()
-    print(p.currentInstruction)
-    if p.instructionType() == "C_INSTRUCTION":
-        print("dest: " + p.dest())
-        print("comp: " + p.comp())
-        print("jump: " + p.jump())
